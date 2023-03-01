@@ -1,19 +1,19 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { Routes, Route } from 'react-router-dom'
+import { MyProvider } from './context/MyContext'
+// style
 import './style/global.css'
+// pages
+import { Home, Login } from './pages'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
         
   return (
-    <div className="flex flex-col justify-between items-center py-24 w-full">
-      <h1 className='text-xl'>{count}</h1>
-      <button onClick={() => setCount((count) => count + 1)}>
-        MORE ONE
-      </button>
-    </div>
+    <MyProvider>
+      <Routes>
+        <Route path='/' element={<Home/>} />
+        <Route path='/login' element={<Login/>} />
+      </Routes>
+    </MyProvider>
   )
 }
-
-export default App
