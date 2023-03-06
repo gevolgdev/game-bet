@@ -3,10 +3,14 @@ import React, { createContext, useState } from 'react'
 export const MyContext = createContext()
 
 export const MyProvider = (props) => {
-  const [count, setCount] = useState(0)
+  const [name, setName] = useState(null)
+
+  const states = {
+    name, setName,
+  }
 
   return (
-    <MyContext.Provider value={{ count, setCount }}>
+    <MyContext.Provider value={states}>
       {props.children}
     </MyContext.Provider>
   )

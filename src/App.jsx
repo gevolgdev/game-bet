@@ -4,7 +4,7 @@ import { MyProvider } from './context/MyContext'
 // style
 import './style/global.css'
 // pages
-import { Home, Login } from './pages'
+import { Home, Login, EasyGame } from './pages'
 
 export default function App() {
         
@@ -13,6 +13,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/login' element={<Login/>} />
+        <Route path='/jogo-seguro' element={<EasyGame/>} />
       </Routes>
     </MyProvider>
   )
