@@ -1,104 +1,94 @@
 import { useState } from 'react'
 // components
 import { HeaderGame } from '../../components'
+import Bets from './Bets'
 
 export default function EasyGame() {
-
   // Inserir Numeros - array
   // Rodar a "Roleta"
   // Verificar se ganhou ou perdeu
   // Retornar feedback na tela
 
-  const [ numberSort, setNumberSort] = useState(0)
+  const [numberSort, setNumberSort] = useState(0)
   const [feedback, setFeedback] = useState('')
-  const [getUserBet, setGetUserBet] = useState({state: true, bet_1: 0, bet_2: 0})
+  const [getUserBet, setGetUserBet] = useState({state: false, bet: []})
+  console.log(getUserBet.bet)
 
   const getUserNumbers = [4, 8] 
   
-  function sortNumber() {
-    const random = () => Math.floor(Math.random() * (10 - 1) + 1)
-    const randomNumber = random()
-
-    if(getUserNumbers.includes(randomNumber)) {
-      setFeedback('Você ganhou a aposta!')
-    } else {
-      setFeedback('Você perdeu a aposta!')
-    }
-    setNumberSort(randomNumber)
-  }
-
   function handleInputChange(e) {
+    const value = e.target.value
+    let newBets = [...getUserBet.bet, value]
 
-    return
+    setGetUserBet((prevState) => ({...prevState, bet: newBets}))
   }
 
-  function addInputValue(e) {
-
+  function handleClearInput() {
+    let deleteBets = [...getUserBet.bet]
+    deleteBets = []
+    
+    setGetUserBet((prevState) => ({...prevState, bet: deleteBets}))
   }
 
-  function handleClearInput(index) {
+  function sortNumber() {
+    let feedbackMessage
+    const random = () => Math.floor(Math.random() * (10 - 1) + 1)
+    const randomNumber = JSON.stringify(random())
+    setNumberSort(randomNumber)
 
+    if(getUserBet.bet.includes(randomNumber)) {
+      feedbackMessage = `🎉 Você GANHOU a aposta! 🎉`
+    } else {
+      feedbackMessage = `⚠️ Você PERDEU a aposta! ⚠️`
+    }
+    
+    setFeedback(feedbackMessage)
   }
 
-  console.log(getUserBet.bet)
 
-  const inputsBet = [
-    {value: getUserBet.bet[0], title: 'Aposta 1'},
-    {value: getUserBet.bet[1], title: 'Aposta 2'},
+  const openBets = () => setGetUserBet((prev) => ({...prev, state: true}))
+    
+  const buttons = [
+    {clickFunction: openBets, text: 'Registrar aposta', class: 'bg-transparent border-2 border-gray-700'},
+    {clickFunction: sortNumber, text: 'Iniciar roleta', class: 'bg-green-400'},
   ]
-
 
   return (
     <>
       { getUserBet.state &&
-        <div className='absolute h-screen w-full p-10 backdrop-blur-sm z-20'>
-          <div className='w-full h-full bg-gray-700 px-6 pt-20'>
-            <h2 className='font-bold text-yellow-400 text-5xl'>Faça sua aposta:</h2>
-            <div className='flex flex-col mt-16'>
-              {
-                inputsBet.map((item, index) =>
-                  <div key={index} className='flex flex-col mb-6'>
-                    <span className='text-gray-500'>{item.title}</span>
-                    <div className='flex flex-row items-center'>
-                      <input
-                        value={item.value}
-                        onChange={handleInputChange}
-                        placeholder='Digite aqui...'
-                        className='p-3 mt-2 w-[70%] text-white bg-gray-600 border-2 border-yellow-600 outline-none text-sm placeholder:text-sm rounded-lg'
-                      />
-                      <button
-                        onClick={() => handleClearInput(index)}
-                        className='text-sm text-gray-500 ml-2 hover:text-white focus:outline-none'
-                      >
-                        Refazer
-                      </button>
-                    </div>
-                  </div>
-                )
-              }
-            </div>
-          </div>
-        </div>
+        <Bets
+          getUserBet={getUserBet}
+          setGetUserBet={setGetUserBet}
+          handleInputChange={handleInputChange}
+          handleClearInput={handleClearInput}
+        />
       }
 
-      <div className='px-5 py-14'>
+      <div className='flex flex-col h-screen p-4'>
         <HeaderGame
           backPage='/'
           title='Jogo Seguro'
         />
 
-
-        <div className='flex flex-col mt-14 w-full'>
+        <div className='flex flex-col mt-6 w-full h-full'>
           <div className='flex flex-col justify-center items-center w-full bg-gray-400 py-16 rounded-xl drop-shadow-2xl'>
             <span className='text-8xl font-bold'>{numberSort}</span>
             <h1 className='mt-5 text-gray-700'>{feedback}</h1>
           </div>
-          <button
-            onClick={sortNumber}
-            className='mt-14 py-4 bg-green-400 w-full text-gray-800 text-lg font-semibold drop-shadow-xl'
-          >
-            Apostar
-          </button>
+          { getUserBet.bet.length > 0 &&
+            <span className='text-gray-700 mt-1'>Minha aposta é de: {getUserBet.bet[0]} e {getUserBet.bet[1]}</span>
+          }
+          <div className='flex flex-col gap-4 mt-auto'>
+            { buttons.map((item, index) => 
+              <button
+                onClick={item.clickFunction}
+                key={index}
+                className={`${item.class} py-4 w-full text-gray-800 text-lg font-semibold drop-shadow-xl rounded-lg`}
+              >
+                {item.text}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>
